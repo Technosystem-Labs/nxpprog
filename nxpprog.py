@@ -1268,28 +1268,13 @@ def main(argv=None):
     device = args[0]
 
     if udp:
-        if '.' in device:
-            if ':' in device:
-                device, port = tuple(device.split(':'))
-                port = int(port)
-                if port<0 or port>65535:
-                    panic("Bad port number: %d" % port)
-            parts = [int(x) for x in device.split('.')]
-            if len(parts)!=4 or min(parts)<0 or max(parts)>255:
-                panic("Bad IPv4-address: %s" % device)
-            device = '.'.join([str(x) for x in parts])
-        elif ':' in device:
-            # panic("Bad IPv6-address: %s" % device)
-            pass
-        else:
-            panic("Bad IP-address: %s" % device)
+        ipaddress.ip_address(device)
         if port < 0:
             port = 41825
         if mac:
             parts = [int(x, 16) for x in mac.split('-')]
             if len(parts)!=6 or min(parts)<0 or max(parts)>255:
                 panic("Bad MAC-address: %s" % mac)
-            mac = '-'.join(['%02x'%x for x in parts])
             log("cpu=%s ip=%s:%d mac=%s" % (cpu, device, port, mac))
         else:
             log("cpu=%s ip=%s:%d" % (cpu, device, port))
